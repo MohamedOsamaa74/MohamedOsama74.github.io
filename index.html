@@ -1,0 +1,352 @@
+
+<div class="container">
+  
+  <h2>Vigenère Cipher</h2>
+  
+  <form action="">
+    
+    <div class="key">
+      <label for="key">Cipher key:</label>
+      <input type="text" name="key" id="key" required>
+    </div>
+    
+    <div class="message">
+  <label for="message">Message to encode or decode:</label>
+  <textarea name="message" id="message" cols="30" rows="5" required></textarea>
+    </div>
+   <div class="radio-buttons">
+     
+      <div>
+    <label for="encode">Encode</label>
+    <input type="radio" name="cipher" id="encode" value="encode" checked>    
+  </div>
+     
+     <div>
+    <label for="decode">Decode</label>
+    <input type="radio" name="cipher" id="decode" value="decode">    
+  </div>
+    
+     
+   </div> 
+  
+    
+  <button type="submit">Decode or Encode</button>
+  </form>
+  
+  
+</div>
+
+<div class="result">
+  <div class="result-message">
+    <div class="close-button">X</div>
+  <h3 id="result-message-title">Yor Encoded or Decoded Message:</h3>
+  <p id="result-message">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, veniam!</p>
+  </div>
+</div>
+
+<script>
+  console.clear();
+/*
+const cipher = (message, key) => {
+  
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
+  
+  const repeatKey = () => { 
+    let positionTracker = 0;
+    let repeatedKey = "";
+    for (let i = 0; i < message.length; i++) {
+        repeatedKey += key[positionTracker];
+        positionTracker++
+        if (positionTracker >= key.length) {
+          positionTracker = 0;
+        }
+     }
+    return repeatedKey; 
+  }
+  
+  
+  const caesarShiftedAlphabet = (shift) => {  
+    let shiftedAlphabet = "";
+    let startPosition = alphabet.indexOf(shift);
+    for (let i = 0; i < alphabet.length; i++) {
+     shiftedAlphabet+= alphabet[startPosition];
+     startPosition++
+     if (startPosition >= alphabet.length) {
+        startPosition = 0;
+     }
+    }
+    return shiftedAlphabet;
+  }
+  
+  let repeatedKey = repeatKey();
+  let str ="";
+  
+  for (let i = 0; i < message.length; i++) {
+    
+    let shiftedAlphabet = caesarShiftedAlphabet(repeatedKey[i]);
+    
+    str+= shiftedAlphabet[alphabet.indexOf(message[i])] || message[i];
+    
+
+  }  
+  
+  const decode = () => {    
+    let str = "";    
+    for (let i = 0; i < message.length; i++) {
+    let shiftedAlphabet = caesarShiftedAlphabet(repeatedKey[i]);
+        str+= alphabet[shiftedAlphabet.indexOf(message[i])] || message[i];
+    } 
+  }
+  
+  return str;
+  
+}
+
+
+
+console.log(cipher("codewars", "password"))
+*/
+
+const form = document.querySelector("form");
+const messageToCipher = document.querySelector("#message");
+const resultModal = document.querySelector(".result");
+const resultMessageTitle = document.querySelector("#result-message-title");
+const resultMessage = document.querySelector("#result-message");
+const closeButton = document.querySelector(".close-button");
+
+
+
+
+function ToLower(s)
+{
+    let str = "";
+    for(let i = 0; i < s.length; i++)
+    {
+          str+=(s[i].toLowerCase());
+    }
+    //s = str.toString();
+    console.log(str);
+    return str;
+}
+
+function VigenèreCipher(key, abc) {
+  
+  const repeatKey = (message) => { 
+    let positionTracker = 0;
+    let repeatedKey = "";
+    for (let i = 0; i < message.length; i++) {
+        repeatedKey += key[positionTracker];
+        positionTracker++
+        if (positionTracker >= key.length) {
+          positionTracker = 0;
+        }
+     }
+    return repeatedKey; 
+  }
+  
+  
+  const caesarShiftedAlphabet = (shift) => {  
+    let shiftedAlphabet = "";
+    let startPosition = abc.indexOf(shift);
+    for (let i = 0; i < abc.length; i++) {
+     shiftedAlphabet+= abc[startPosition];
+     startPosition++
+     if (startPosition >= abc.length) {
+        startPosition = 0;
+     }
+    }
+    return shiftedAlphabet;
+  }
+  
+  
+  
+  this.encode = function (str) {
+    let repeatedKey = repeatKey(str);
+    let encodedStr = "";
+    for (let i = 0; i < str.length; i++) {
+      let shiftedAlphabet = caesarShiftedAlphabet(repeatedKey[i]);
+      encodedStr+= shiftedAlphabet[abc.indexOf(str[i])] || str[i];
+    }  
+    return encodedStr;
+  };
+  
+  this.decode = function (str) {
+    let repeatedKey = repeatKey(str);
+    let decodedStr = "";
+    for (let i = 0; i < str.length; i++) {
+    let shiftedAlphabet = caesarShiftedAlphabet(repeatedKey[i]);
+        decodedStr+= abc[shiftedAlphabet.indexOf(str[i])] || str[i];
+    }
+    return decodedStr;
+  };
+}
+
+let abc, key;
+abc = "abcdefghijklmnopqrstuvwxyz";
+key = "password"
+c = new VigenèreCipher(key, abc);
+
+console.log(c.encode("codewarsjjj"))
+console.log(c.decode("rovwsoivyjb"))
+
+
+form.addEventListener("submit", (e)=>{
+  
+  e.preventDefault();  
+  let { key, message, cipher } = e.target;
+  key.value = ToLower(key.value);
+  message.value = ToLower(message.value);
+  const newCipher = new VigenèreCipher(key.value, abc);
+  
+ if(cipher.value === "decode"){
+   
+   resultMessageTitle.innerText = "Your Decoded Message is:";
+   resultMessage.innerText = newCipher.decode(message.value);
+   resultModal.classList.toggle("active");
+ }
+  
+   if(cipher.value === "encode"){     
+   resultMessageTitle.innerText = "Your Encoded Message is:";
+   resultMessage.innerText = newCipher.encode(message.value);
+   resultModal.classList.toggle("active");
+ }
+  
+});
+
+
+closeButton.addEventListener("click", ()=>{
+  
+  resultModal.classList.remove("active");
+  
+});
+</script>
+
+<style>
+  * {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body {
+  height:100%;
+}
+
+body {
+  display:grid;
+  place-items:center;
+  font-family:sans-serif;
+  color:hsl(0, 0%, 30%);
+}
+
+.container {
+  width:80%;
+  padding:1.5rem;
+  max-width:400px;
+  border-radius:10px;
+  border:1px solid hsl(0, 0%, 80%);
+  display:flex;
+  flex-direction:column;
+  gap:2rem;
+  align-items:center;
+}
+
+.container form {
+  width:100%;
+  display:grid;
+  gap:1rem;
+}
+
+button {
+  border:0;
+  padding:1rem;
+  background-color:hsl(55, 90%, 50%);
+  border-radius:10px;
+  transition:350ms ease;
+}
+
+button:hover {
+  background-color:hsl(30, 90%, 50%);
+  cursor:pointer;
+}
+
+
+textarea {
+  border:1px solid hsl(0, 0%, 80%);
+  padding:1rem;
+  color:hsl(0, 0%, 50%);
+  margin-top:0.5rem;
+  width:100%;
+  border-radius:10px;
+}
+
+.radio-buttons {
+  display:flex;
+  gap:1rem;
+}
+
+input[type="text"] {
+  padding:1rem;
+  border:1px solid hsl(0, 0%, 80%);
+  border-radius:10px;
+}
+
+
+.key{
+  display:grid;  
+  gap:0.5rem;
+}
+
+.container h2 {
+  background-color:hsl(220, 100%, 2%);
+  border-radius:inherit;
+  width:100%;
+  text-align:center;
+  padding:1rem;
+  color:white;
+}
+
+.result {
+  position:fixed;
+  inset:0;
+  background:hsl(0, 0%, 0%, 0.7);
+  backdrop-filter:blur(10px);
+  display:grid;
+  place-items:center;
+  transition:250ms ease;
+  visibility:hidden;
+  opacity:0;
+}
+
+.result.active {
+  visibility:visible;
+  opacity:1;
+}
+
+.result-message {
+  display:grid;
+  gap:0.5rem;
+  position:relative;
+  width:80%;
+  max-width:450px;
+  padding:2rem;
+  background-color:white;
+  border-radius:10px;
+}
+
+.close-button {
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:20px;
+  height:20px;
+  display:grid;
+  place-items:center;
+  font-size:0.8rem;
+}
+
+.close-button:hover {
+  cursor:pointer;
+}
+</style>
